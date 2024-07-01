@@ -87,11 +87,11 @@ treeview.pack(fill=BOTH, expand=True)
 def handle_keypress(event):
     global is_recording, is_finished
     key = event.char
-    if key == 'a' and not is_recording:
+    if key == 'A' and not is_recording:
         is_recording = True
         is_finished = False
         print("Recording started")
-    elif key == 's' and is_recording:
+    elif key == 'S' and is_recording:
         is_recording = False
         is_finished = True
         label_entry.config(state='normal')
