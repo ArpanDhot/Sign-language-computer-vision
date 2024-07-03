@@ -95,7 +95,7 @@ def main():
         if landmark_list:
             frame = draw_landmarks(frame, landmark_list)
 
-        cv.imshow('Hand Tracking', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
+        cv.imshow('Hand Tracking', frame)
         key = cv.waitKey(10) & 0xFF
 
         if key == 27:  # Press 'ESC' to quit

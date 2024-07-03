@@ -44,7 +44,7 @@ def main():
         min_tracking_confidence=args.min_tracking_confidence
     )
 
-    with open('hand_landmarks.csv', mode='w', newline='') as file:
+    with open('../hand_landmarks.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
         header = ["Label", "Hand_Status"] + [f"Left_LM_{i}_x" for i in range(21)] + [f"Left_LM_{i}_y" for i in
                                                                                      range(21)] + [f"Right_LM_{i}_x" for
