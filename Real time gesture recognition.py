@@ -45,6 +45,11 @@ def main():
     model = tf.keras.models.load_model('keypoint_classifier.hdf5')
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
+    # Define class names
+    class_names = ['A', 'B', 'C', 'D']
+
+    confidence_threshold = 0.95  # Set confidence threshold to 80%
+
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -79,15 +84,18 @@ def main():
             # Make prediction
             prediction = model.predict(landmarks_array)
             predicted_class = np.argmax(prediction, axis=1)[0]
+            confidence_score = np.max(prediction)
 
-            # Display the predicted class on the frame
-            cv.putText(frame, f'Class: {predicted_class}', (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv.LINE_AA)
+            # Display the predicted class on the frame if confidence is above threshold
+            if confidence_score > confidence_threshold:
+                class_name = class_names[predicted_class]
+                cv.putText(frame, f'Class: {class_name} ({confidence_score:.2f})', (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv.LINE_AA)
 
         # Draw landmarks
         if landmark_list:
             frame = draw_landmarks(frame, landmark_list)
 
-        cv.imshow('Hand Tracking', frame)
+        cv.imshow('Hand Tracking', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
         key = cv.waitKey(10) & 0xFF
 
         if key == 27:  # Press 'ESC' to quit
