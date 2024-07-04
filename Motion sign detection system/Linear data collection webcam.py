@@ -4,6 +4,14 @@ import cv2 as cv
 import mediapipe as mp
 
 
+
+
+# This is used to auto stop when x number of series/clips are recorded. I dont want to use auto cut but manual,
+# I can simply increase the value to 1000
+
+SERIES_COUNT_THRESHOLD = 4
+
+
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--device", type=int, default=0)
@@ -57,6 +65,7 @@ def main():
         session_data = []
         sequence_length = args.sequence_length
         series_number = 1
+        series_count = 0
 
         while True:
             ret, frame = cap.read()
@@ -104,7 +113,13 @@ def main():
                     for seq_frame_data in session_data:
                         writer.writerow(seq_frame_data)
                     series_number += 1
+                    series_count += 1
                     session_data = []  # Clear the session data after saving
+
+                # Stop recording after 4 series
+                if series_count >= SERIES_COUNT_THRESHOLD:
+                    recording = False
+                    print(f"Recording stopped automatically after reaching 4 series for label: {label}")
 
             # Draw landmarks
             if pose_landmarks:
@@ -124,6 +139,7 @@ def main():
                 session_data = []
                 label = input("Enter the label for this recording: ")
                 series_number = 1
+                series_count = 0
                 print("Recording started...")
             elif key == ord('s'):  # Press 'S' to stop recording
                 recording = False
