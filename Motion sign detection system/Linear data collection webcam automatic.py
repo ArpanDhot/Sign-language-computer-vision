@@ -2,11 +2,7 @@ import argparse
 import csv
 import cv2 as cv
 import mediapipe as mp
-import time
 
-# This is used to auto stop when x number of series/clips are recorded. I don't want to use auto cut but manual,
-# I can simply increase the value to 1000
-SERIES_COUNT_THRESHOLD = 30
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -15,8 +11,9 @@ def get_args():
     parser.add_argument("--height", type=int, default=540)
     parser.add_argument("--min_detection_confidence", type=float, default=0.7)
     parser.add_argument("--min_tracking_confidence", type=float, default=0.5)
-    parser.add_argument("--sequence_length", type=int, default=30, help="Length of sequences for LSTM")
+    parser.add_argument("--sequence_length", type=int, default=40, help="Length of sequences for LSTM")
     return parser.parse_args()
+
 
 def draw_landmarks(image, landmarks, color):
     for x, y in landmarks:
@@ -24,12 +21,14 @@ def draw_landmarks(image, landmarks, color):
         cv.circle(image, (int(x), int(y)), 5, (0, 0, 0), 1)
     return image
 
+
 def normalize_landmarks(landmarks):
     max_value = max(list(map(abs, [coord for landmark in landmarks for coord in landmark])))
     if max_value == 0:
         return landmarks  # Avoid division by zero
     normalized_landmarks = [(x / max_value, y / max_value) for x, y in landmarks]
     return normalized_landmarks
+
 
 def main():
     args = get_args()
@@ -109,17 +108,10 @@ def main():
                     series_count += 1
                     session_data = []  # Clear the session data after saving
 
-                    # Pause for 2 seconds between series or stop recording
-                    if series_count < SERIES_COUNT_THRESHOLD:
-                        recording = False
-                        print(f"Series {series_number - 1} saved. Preparing for next series...")
-                        cv.putText(frame, f"Series {series_number - 1} saved. Preparing for next series...", (10, 30), cv.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
-                        cv.imshow('Holistic Tracking', frame)
-                        cv.waitKey(2000)
-                        recording = True
-                    else:
-                        recording = False
-                        print(f"Recording stopped automatically after reaching {SERIES_COUNT_THRESHOLD} series for label: {label}")
+                # Stop recording after 4 series
+                if series_count >= 4:
+                    recording = False
+                    print(f"Recording stopped automatically after reaching 4 series for label: {label}")
 
             # Draw landmarks
             if pose_landmarks:
@@ -128,10 +120,6 @@ def main():
                 frame = draw_landmarks(frame, right_hand_landmarks, (0, 0, 255))  # Red for right hand landmarks (flipped left hand)
             if left_hand_landmarks:
                 frame = draw_landmarks(frame, left_hand_landmarks, (255, 0, 0))  # Blue for left hand landmarks (flipped right hand)
-
-            # Display label, series number, and frame count
-            if recording:
-                cv.putText(frame, f"Label: {label}, Series: {series_number}, Frame: {len(session_data)}", (10, 60), cv.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
 
             cv.imshow('Holistic Tracking', cv.cvtColor(frame, cv.COLOR_RGB2BGR))
             key = cv.waitKey(10) & 0xFF
@@ -145,9 +133,22 @@ def main():
                 series_number = 1
                 series_count = 0
                 print("Recording started...")
+            elif key == ord('s'):  # Press 'S' to stop recording
+                recording = False
+                print("Recording stopped.")
+            elif key == ord('d'):  # Press 'D' to save recording
+                recording = False
+                if len(session_data) == sequence_length:
+                    for seq_frame_data in session_data:
+                        writer.writerow(seq_frame_data)
+                    print(f"Data saved with label: {label}")
+                else:
+                    print("No complete sequence to save.")
+                session_data = []
 
     cap.release()
     cv.destroyAllWindows()
+
 
 if __name__ == "__main__":
     main()
