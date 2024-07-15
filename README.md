@@ -1,5 +1,5 @@
 
-# UnMute - Gesture Recognition System
+# Sign language computer vision - Gesture Recognition System
 
 UnMute is a comprehensive gesture recognition system designed to detect and classify hand gestures in real-time. It incorporates two primary approaches for gesture recognition: Motion Sign Detection System and Static Sign Detection System. These approaches leverage MediaPipe for hand landmark detection and a neural network model for gesture classification, enabling applications in human-computer interaction, sign language recognition, and more.
 
