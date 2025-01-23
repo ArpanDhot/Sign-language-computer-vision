@@ -34,11 +34,11 @@ UnMute provides two main approaches for gesture recognition:
 ### Demos
 1. **Run the gesture recognition script to create a dataset:**
    
-<img src="demo/dataset_creation.gif" alt="Dataset GIF" width="600">
+<img src="demo/dataset_creation.gif" alt="Dataset GIF" width="400">
 
 2. **Run the real-time gesture recognition script using the trained model:**
    
-<img src="demo/model_testing.gif" alt="Model GIF" width="600">
+<img src="demo/model_testing.gif" alt="Model GIF" width="400">
 
 
 ## Installation
