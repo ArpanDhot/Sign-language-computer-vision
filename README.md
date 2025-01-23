@@ -7,6 +7,7 @@ UnMute is a comprehensive gesture recognition system designed to detect and clas
 
 - [Overview](#overview)
 - [Features](#features)
+  - [Demos](#demos)
 - [Installation](#installation)
 - [Usage](#usage)
   - [Motion Sign Detection System](#motion-sign-detection-system)
@@ -30,8 +31,17 @@ UnMute provides two main approaches for gesture recognition:
 - Model training and evaluation.
 - Easy-to-use interface for data collection and gesture classification.
 
-## Installation
+### Demos
+1. **Run the gesture recognition script to create a dataset:**
+   
+<img src="demo/dataset_creation.gif" alt="Dataset GIF" width="600">
 
+2. **Run the real-time gesture recognition script using the trained model:**
+   
+<img src="demo/model_testing.gif" alt="Model GIF" width="600">
+
+
+## Installation
 To install and set up the UnMute project, follow these steps:
 
 1. **Clone the repository:**
@@ -116,6 +126,7 @@ The real-time gesture recognition system captures video frames from a webcam, de
    - Landmark normalization.
    - Gesture classification using the trained model.
    - Display the recognized gesture on the video feed.
+
 
 ## Contributing
 
